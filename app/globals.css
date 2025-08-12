@@ -41,3 +41,41 @@ a {
     color-scheme: dark;
   }
 }
+/* === MOBILE HOTFIX (drop at end of globals.css) === */
+@supports (padding: max(0px)) {
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+}
+
+@media (max-width: 640px) {
+  /* Header smaller on phones */
+  header { height: 68px !important; padding: 0 16px !important; }
+
+  /* Hero titles stop overflowing */
+  h1, .text-6xl, .md\:text-6xl { font-size: 2rem !important; line-height: 1.15 !important; }
+  .text-5xl { font-size: 1.75rem !important; }
+
+  /* Paragraph / subcopy */
+  p, .text-xl, .md\:text-xl { font-size: 1rem !important; line-height: 1.45 !important; }
+
+  /* Buttons */
+  .btn, .btn-primary, .btn-ghost {
+    padding: 12px 16px !important; font-size: 1rem !important; border-radius: 9999px !important;
+  }
+
+  /* Quote form inputs (prevents iOS zoom + huge fields) */
+  .quote-form input,
+  .quote-form select,
+  .quote-form textarea {
+    font-size: 16px !important;  /* iOS no-zoom threshold */
+    padding: 12px 14px !important;
+  }
+
+  /* Glass panels a touch darker for readability */
+  .glass-card { background: rgba(0,0,0,.45) !important; border-color: rgba(255,255,255,.12) !important; backdrop-filter: blur(12px) !important; }
+
+  /* Reduce giant top spacing on Products */
+  .pt-44 { padding-top: 7rem !important; }
+
+  /* Tame heroic full-screen sections so they don't feel endless */
+  .min-h-screen { min-height: calc(100vh - 20vh) !important; }
+}
