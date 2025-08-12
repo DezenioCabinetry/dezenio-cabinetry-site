@@ -1,4 +1,6 @@
 // app/thank-you/page.tsx
+import Link from "next/link";
+
 export const metadata = {
   title: "Thank You | Dezenio Cabinetry",
   robots: { index: false, follow: false },
@@ -16,9 +18,9 @@ export default function ThankYouPage() {
           We’ll reach out from <strong>info@dezeniocabinetry.com</strong>{" "}
           shortly.
         </p>
-        <a href="/" className="inline-block mt-8 underline">
+        <Link href="/" className="inline-block mt-8 underline">
           Back to Home
-        </a>
+        </Link>
       </section>
     </main>
   );

@@ -2,60 +2,14 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-const SearchBox = dynamic(() => import("./MapboxSearchBox"), { ssr: false });
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-type RetrieveEvent = {
-  features?: Array<{
-    geometry?: { coordinates?: [number, number] };
-    place_name?: string;
-    properties?: {
-      full_address?: string;
-      address?: string;
-      context?: {
-        place?: { name?: string };
-        region?: { name?: string };
-        postcode?: { name?: string };
-        country?: { name?: string };
-      };
-    };
-  }>;
-};
-
 export default function QuoteForm() {
-  const router = useRouter(); // 👈 add
+  const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const addressInputRef = useRef<HTMLInputElement | null>(null);
-
-  const setHidden = (name: string, val: string) => {
-    const el = document.querySelector<HTMLInputElement>(
-      `input[name="${name}"]`
-    );
-    if (el) el.value = val;
-  };
-
-  function handleRetrieve(e: RetrieveEvent) {
-    const place = e?.features?.[0];
-    if (!place) return;
-    const full =
-      place.properties?.full_address ||
-      place.place_name ||
-      place.properties?.address ||
-      "";
-    const coords = place.geometry?.coordinates ?? [];
-    if (addressInputRef.current) addressInputRef.current.value = full;
-
-    setHidden("addressLine1", place.properties?.address || "");
-    setHidden("placeCity", place.properties?.context?.place?.name || "");
-    setHidden("placeRegion", place.properties?.context?.region?.name || "");
-    setHidden("placePostcode", place.properties?.context?.postcode?.name || "");
-    setHidden("placeCountry", place.properties?.context?.country?.name || "");
-    setHidden("lat", String(coords[1] ?? ""));
-    setHidden("lng", String(coords[0] ?? ""));
-  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -77,11 +31,11 @@ export default function QuoteForm() {
       form.reset();
       if (addressInputRef.current) addressInputRef.current.value = "";
 
-      // ✅ redirect to thank-you
       router.push("/thank-you");
-    } catch (err: any) {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong.";
       setStatus("error");
-      setError(err?.message || "Something went wrong.");
+      setError(msg);
     }
   }
 
@@ -128,17 +82,11 @@ export default function QuoteForm() {
         </div>
       </div>
 
-      {/* Address with autocomplete */}
+      {/* Address (plain input for now) */}
       <div>
         <label className="block text-sm font-medium mb-1">
           Project Address
         </label>
-        <SearchBox
-          accessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string}
-          options={{ language: "en", country: "US" }}
-          onRetrieve={handleRetrieve}
-          className="mb-2"
-        />
         <input
           ref={addressInputRef}
           name="address"
@@ -146,7 +94,7 @@ export default function QuoteForm() {
           className="w-full px-4 py-2 rounded border border-white/20 bg-black/40 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40"
           placeholder="1234 Oak St, Nashville, TN"
         />
-        {/* Hidden structured fields */}
+        {/* Hidden structured fields (optional placeholders) */}
         <input type="hidden" name="addressLine1" />
         <input type="hidden" name="placeCity" />
         <input type="hidden" name="placeRegion" />
@@ -236,7 +184,6 @@ export default function QuoteForm() {
         {status === "sending" ? "Sending…" : "Submit Quote Request"}
       </button>
 
-      {/* inline fallback if you decide not to redirect someday */}
       {status === "sent" && (
         <p className="text-green-400 text-center">
           Thanks! We’ll follow up shortly.
