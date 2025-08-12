@@ -7,6 +7,12 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
 
+  // Feature flags: set via NEXT_PUBLIC_* env vars
+  const showPortfolio =
+    (process.env.NEXT_PUBLIC_FEATURE_PORTFOLIO ?? "0") === "1";
+  const showBuilders =
+    (process.env.NEXT_PUBLIC_FEATURE_BUILDERS ?? "0") === "1";
+
   const navLinkClass = (path: string) =>
     pathname === path
       ? "relative text-white font-semibold after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-white"
@@ -32,12 +38,18 @@ export default function Header() {
           <Link href="/products" className={navLinkClass("/products")}>
             Products
           </Link>
-          <Link href="/portfolio" className={navLinkClass("/portfolio")}>
-            Portfolio
-          </Link>
-          <Link href="/builders" className={navLinkClass("/builders")}>
-            Builders
-          </Link>
+
+          {showPortfolio && (
+            <Link href="/portfolio" className={navLinkClass("/portfolio")}>
+              Portfolio
+            </Link>
+          )}
+
+          {showBuilders && (
+            <Link href="/builders" className={navLinkClass("/builders")}>
+              Builders
+            </Link>
+          )}
 
           {/* Phone Number */}
           <a
