@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 const SearchBox = dynamic(() => import("./MapboxSearchBox"), { ssr: false });
 
 type Status = "idle" | "sending" | "sent" | "error";

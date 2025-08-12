@@ -1,8 +1,11 @@
 "use client";
 
+import * as React from "react";
 import { SearchBox } from "@mapbox/search-js-react";
-import type { SearchBoxProps } from "@mapbox/search-js-react";
 
-export default function MapboxSearchBox(props: SearchBoxProps) {
+// Infer the prop types from the component
+type Props = React.ComponentProps<typeof SearchBox>;
+
+export default function MapboxSearchBox(props: Props) {
   return <SearchBox {...props} />;
 }
