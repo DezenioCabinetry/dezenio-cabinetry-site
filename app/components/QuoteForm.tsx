@@ -4,9 +4,12 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-// Load Mapbox SearchBox client-side only
+// Load Mapbox SearchBox client-side only (correct dynamic form)
 const SearchBox = dynamic(
-  () => import("@mapbox/search-js-react").then((m) => m.SearchBox),
+  () =>
+    import("@mapbox/search-js-react").then((m) => ({
+      default: m.SearchBox,
+    })),
   { ssr: false }
 );
 
