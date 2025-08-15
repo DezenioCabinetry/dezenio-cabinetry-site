@@ -11,6 +11,7 @@ export default function Header() {
     (process.env.NEXT_PUBLIC_FEATURE_PORTFOLIO ?? "0") === "1";
   const showBuilders =
     (process.env.NEXT_PUBLIC_FEATURE_BUILDERS ?? "0") === "1";
+
   const isActive = (p: string) =>
     pathname === p
       ? "relative text-white font-semibold after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-white"
@@ -23,8 +24,15 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-black/35 backdrop-blur-md border-b border-white/10">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 flex items-center justify-between h-[80px] sm:h-[96px] md:h-[112px]">
-        {/* LOGO — fully responsive size */}
+      {/* Make inner row relative so the hamburger can be absolutely placed */}
+      <div
+        className="relative mx-auto max-w-[1400px] flex items-center justify-center md:justify-between h-[80px] sm:h-[96px] md:h-[112px] px-5 sm:px-6 lg:px-8"
+        style={{
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+        }}
+      >
+        {/* LOGO */}
         <Link
           href="/"
           className="flex items-center justify-center md:justify-start shrink-0 w-full md:w-auto"
@@ -65,13 +73,16 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* MOBILE HAMBURGER */}
+        {/* MOBILE HAMBURGER — ABSOLUTE, inset from the right = floating */}
         <button
           aria-label="Open menu"
           onClick={() => setOpen(true)}
-          className="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 border border-white/15"
+          className="md:hidden absolute top-1/2 -translate-y-1/2 rounded-full w-12 h-12 bg-white/12 border border-white/20 shadow-lg focus:outline-none focus:ring-2 focus:ring-white/40"
+          style={{
+            right: "max(16px, calc(env(safe-area-inset-right) + 12px))",
+          }}
         >
-          <div className="w-6 space-y-1.5">
+          <div className="w-6 mx-auto space-y-1.5">
             <span className="block h-[2px] w-full bg-white"></span>
             <span className="block h-[2px] w-4/5 bg-white"></span>
             <span className="block h-[2px] w-3/5 bg-white"></span>
@@ -79,20 +90,28 @@ export default function Header() {
         </button>
       </div>
 
-      {/* MOBILE SHEET */}
+      {/* MOBILE DRAWER — also inset from the right so it isn't glued to the edge */}
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute top-0 right-0 bottom-0 w-[86%] max-w-[360px] bg-black/90 backdrop-blur-md border-l border-white/10 p-6 flex flex-col gap-6">
+          <div
+            className="absolute top-0 bottom-0 bg-black/92 backdrop-blur-md border-l border-white/10 p-6 flex flex-col rounded-l-2xl shadow-2xl"
+            style={{
+              right: "max(12px, env(safe-area-inset-right))",
+              width: "min(88vw, 400px)",
+              paddingTop: "max(1.25rem, env(safe-area-inset-top))",
+              paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))",
+            }}
+          >
             <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold text-white">Menu</span>
+              <span className="text-xl font-semibold text-white">Menu</span>
               <button
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
-                className="w-10 h-10 grid place-items-center rounded-full bg-white/10 border border-white/15"
+                className="w-10 h-10 grid place-items-center rounded-full bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/40"
               >
                 <div className="relative w-4 h-4">
                   <span className="absolute inset-0 rotate-45 block h-[2px] bg-white top-1/2"></span>
@@ -101,45 +120,59 @@ export default function Header() {
               </button>
             </div>
 
-            <Link
-              href="/products"
-              onClick={() => setOpen(false)}
-              className="text-base py-2 text-white"
-            >
-              Products
-            </Link>
-            {showPortfolio && (
-              <Link
-                href="/portfolio"
-                onClick={() => setOpen(false)}
-                className="text-base py-2 text-white"
-              >
-                Portfolio
-              </Link>
-            )}
-            {showBuilders && (
-              <Link
-                href="/builders"
-                onClick={() => setOpen(false)}
-                className="text-base py-2 text-white"
-              >
-                Builders
-              </Link>
-            )}
-            <Link
-              href="/quote"
-              onClick={() => setOpen(false)}
-              className="text-base py-2 text-white"
-            >
-              Get a Quote
-            </Link>
-            <a
-              href="tel:+16154742004"
-              onClick={() => setOpen(false)}
-              className="text-base py-2 text-white"
-            >
-              (615) 474-2004
-            </a>
+            <nav className="mt-6 flex-1 overflow-y-auto">
+              <ul className="space-y-1.5 text-white">
+                <li>
+                  <Link
+                    href="/products"
+                    onClick={() => setOpen(false)}
+                    className="block rounded-lg px-3 py-3 hover:bg-white/5"
+                  >
+                    Products
+                  </Link>
+                </li>
+                {showPortfolio && (
+                  <li>
+                    <Link
+                      href="/portfolio"
+                      onClick={() => setOpen(false)}
+                      className="block rounded-lg px-3 py-3 hover:bg-white/5"
+                    >
+                      Portfolio
+                    </Link>
+                  </li>
+                )}
+                {showBuilders && (
+                  <li>
+                    <Link
+                      href="/builders"
+                      onClick={() => setOpen(false)}
+                      className="block rounded-lg px-3 py-3 hover:bg-white/5"
+                    >
+                      Builders
+                    </Link>
+                  </li>
+                )}
+                <li>
+                  <Link
+                    href="/quote"
+                    onClick={() => setOpen(false)}
+                    className="block rounded-lg px-3 py-3 hover:bg-white/5"
+                  >
+                    Get a Quote
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="tel:+16154742004"
+                    onClick={() => setOpen(false)}
+                    className="block rounded-lg px-3 py-3 hover:bg-white/5"
+                  >
+                    (615) 474-2004
+                  </a>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       )}
