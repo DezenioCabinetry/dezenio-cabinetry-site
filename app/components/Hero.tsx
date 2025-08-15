@@ -4,115 +4,135 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+/**
+ * FLOAT: overlay is fixed under the header while the tall image is in view.
+ * LAND:  after the image ends, overlay sits in a black band that is exactly
+ *        the remaining viewport height between the fixed header and the footer.
+ *        The overlay is vertically centered in that band.
+ *
+ * Tuning knobs:
+ *  - DOCK_TRIGGER_OFFSET_PX: dock a bit earlier (positive number docks sooner).
+ *  - DOCK_NUDGE_PX: move the docked overlay up/down a few pixels after centering.
+ */
+
+const DOCK_TRIGGER_OFFSET_PX = 140; // try 100–200 if you want it to dock a little sooner
+const DOCK_NUDGE_PX = 40; // positive moves it DOWN a bit; negative moves it UP
+
 export default function Hero() {
-  const [docked, setDocked] = useState(false);
+  const imgWrapRef = useRef<HTMLDivElement | null>(null);
+  const dockContentRef = useRef<HTMLDivElement | null>(null);
 
-  const imageWrapRef = useRef<HTMLDivElement | null>(null);
-  const bandRef = useRef<HTMLDivElement | null>(null);
-  const rafRef = useRef<number | null>(null);
+  const [headerH, setHeaderH] = useState(80);
+  const [dockH, setDockH] = useState(160);
+  const [onImage, setOnImage] = useState(true);
 
+  // Header height by breakpoint (matches your Header.tsx 80/96/112)
+  const measureHeader = (): number => {
+    if (typeof window === "undefined") return 80;
+    if (window.matchMedia("(min-width: 768px)").matches) return 112; // md
+    if (window.matchMedia("(min-width: 640px)").matches) return 96; // sm
+    return 80;
+  };
+
+  // Compute band height = viewport - header - footer (and make sure content fits)
   useEffect(() => {
-    const footer = document.getElementById("site-footer");
-    const imageWrap = imageWrapRef.current;
-    if (!footer || !imageWrap) return;
+    const footerEl = (document.querySelector("footer") ||
+      document.querySelector("[data-footer]") ||
+      document.querySelector('[role="contentinfo"]')) as HTMLElement | null;
 
-    const LANDING_WEIGHT = 0.64; // closer to the footer
+    const compute = () => {
+      const h = measureHeader();
+      setHeaderH(h);
 
-    const update = () => {
-      const imageBottomAbs =
-        window.scrollY + imageWrap.getBoundingClientRect().bottom;
-      const footerTopAbs = window.scrollY + footer.getBoundingClientRect().top;
+      const footerH = footerEl ? footerEl.getBoundingClientRect().height : 0;
+      const vh = window.innerHeight;
+      const contentH = dockContentRef.current?.offsetHeight ?? 0;
 
-      const midAbs =
-        imageBottomAbs + (footerTopAbs - imageBottomAbs) * LANDING_WEIGHT;
-
-      const headerH =
-        window.innerWidth >= 768 ? 112 : window.innerWidth >= 640 ? 96 : 80;
-
-      const targetY = midAbs - headerH;
-
-      const ENTER_BUFFER = 8;
-      const EXIT_BUFFER = 40;
-      const y = window.scrollY;
-
-      setDocked((prev) => {
-        if (!prev && y >= targetY + ENTER_BUFFER) return true;
-        if (prev && y < targetY - EXIT_BUFFER) return false;
-        return prev;
-      });
+      const exact = Math.max(0, Math.round(vh - h - footerH));
+      const minNeeded = contentH + 24; // breathing room so pills never clip
+      setDockH(Math.max(exact, minNeeded, 120));
     };
 
-    const onScrollResize = () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(update);
-    };
+    compute();
+    window.addEventListener("resize", compute);
 
-    update();
-    window.addEventListener("scroll", onScrollResize, { passive: true });
-    window.addEventListener("resize", onScrollResize);
+    let ro: ResizeObserver | null = null;
+    if (footerEl && "ResizeObserver" in window) {
+      ro = new ResizeObserver(compute);
+      ro.observe(footerEl);
+    }
+
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("scroll", onScrollResize);
-      window.removeEventListener("resize", onScrollResize);
+      window.removeEventListener("resize", compute);
+      ro?.disconnect();
     };
   }, []);
 
+  // Toggle FLOAT vs LAND with a small early-dock offset
+  useEffect(() => {
+    const onScrollOrResize = () => {
+      const wrap = imgWrapRef.current;
+      if (!wrap) return;
+
+      const imgBottomAbs = wrap.offsetTop + wrap.offsetHeight;
+      const viewTopUnderHeader = window.scrollY + headerH;
+
+      // Dock a little earlier so it feels more “middle”
+      setOnImage(viewTopUnderHeader < imgBottomAbs - DOCK_TRIGGER_OFFSET_PX);
+    };
+
+    onScrollOrResize();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
+  }, [headerH]);
+
   return (
     <section className="relative w-full text-white">
-      {/* Push image below header */}
-      <div
-        ref={imageWrapRef}
-        className="w-full mt-[80px] sm:mt-[96px] md:mt-0"
-        style={{ marginTop: "max(80px, env(safe-area-inset-top))" }}
-      >
+      {/* Tall image in normal flow */}
+      <div ref={imgWrapRef} className="relative">
         <Image
           src="/Dezenio-HomeBG.png"
           alt="Dezenio Kitchen Gallery"
           width={1366}
           height={5376}
           priority
-          className="w-full h-auto object-cover"
+          className="block w-full h-auto object-cover"
         />
       </div>
 
-      {/* Tighter breathing room */}
-      <div className="h-[clamp(8px,2vh,20px)] bg-transparent" />
+      {/* FLOAT: overlay fixed under the header while on the image */}
+      {onImage && (
+        <div
+          className="fixed inset-x-0 z-30 pointer-events-none"
+          style={{ top: `${headerH}px`, height: `calc(100vh - ${headerH}px)` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/18 to-transparent" />
+          <CenteredOverlay />
+        </div>
+      )}
 
-      {/* Smaller black band */}
-      <div
-        ref={bandRef}
-        id="hero-dock"
-        className="relative bg-black h-[4vh] sm:h-[3.5vh] md:h-[3vh]"
-      >
+      {/* LAND: exact space between header and footer; overlay centered (with small nudge) */}
+      <div className="relative bg-black">
         <div
           className={[
-            "absolute inset-0 flex items-center justify-center px-4",
+            "mx-auto max-w-[1200px] px-6",
+            "flex items-center justify-center text-center",
+            onImage ? "opacity-0 pointer-events-none" : "opacity-100",
             "transition-opacity duration-150",
-            docked ? "opacity-100" : "opacity-0 pointer-events-none",
           ].join(" ")}
+          style={{ height: dockH }}
+          aria-hidden={onImage}
         >
-          <Docked />
-        </div>
-      </div>
-
-      {/* Floating overlay */}
-      <div
-        className={[
-          "fixed inset-x-0 top-[64px] sm:top-[84px] z-30",
-          "h-[calc(100vh-64px)] sm:h-[calc(100vh-84px)]",
-          "flex items-center justify-center px-4 pointer-events-none",
-          "transition-opacity duration-150",
-          docked ? "opacity-0" : "opacity-100",
-        ].join(" ")}
-      >
-        <div
-          className="absolute inset-0 bg-gradient-to-b
-                     from-black/24 via-black/12 to-black/4
-                     md:from-black/18 md:via-black/10 md:to-black/0"
-        />
-        <div className="relative z-10 pointer-events-auto w-full">
-          <div className="max-w-[1200px] mx-auto text-center px-4">
-            <HeroCopy />
+          <div
+            ref={dockContentRef}
+            className="w-full"
+            style={{ transform: `translateY(${DOCK_NUDGE_PX}px)` }}
+          >
+            <OverlayContent />
           </div>
         </div>
       </div>
@@ -120,13 +140,24 @@ export default function Hero() {
   );
 }
 
-function HeroCopy() {
+/* ---------- shared overlay (same size floating & docked) ---------- */
+
+function CenteredOverlay() {
+  return (
+    <div className="relative z-10 w-full h-full flex items-center justify-center px-4 pointer-events-none">
+      <div className="w-full max-w-[1200px] text-center pointer-events-auto">
+        <OverlayContent />
+      </div>
+    </div>
+  );
+}
+
+function OverlayContent() {
   return (
     <>
-      <h1 className="font-extrabold leading-tight text-white tracking-tight drop-shadow-[0_8px_30px_rgba(0,0,0,.6)] text-[clamp(2rem,7vw,5rem)] max-w-[22ch] sm:max-w-none mx-auto">
-        Premium Cabinetry.
-        <br className="hidden md:block" />
-        Unmatched Execution.
+      <h1 className="font-extrabold leading-tight tracking-tight drop-shadow-[0_8px_30px_rgba(0,0,0,.6)] text-[clamp(2rem,7vw,5rem)]">
+        <span className="block">Premium Cabinetry.</span>
+        <span className="block">Unmatched Execution.</span>
       </h1>
 
       <p className="mt-3 text-white/95 text-[clamp(1rem,2.6vw,1.25rem)] max-w-[72ch] mx-auto">
@@ -137,25 +168,21 @@ function HeroCopy() {
       <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href="/quote"
-          className="inline-flex items-center justify-center rounded-full px-6 py-3 bg-white text-black font-semibold hover:opacity-90"
+          className="inline-flex items-center justify-center rounded-full bg-white text-black font-semibold
+                     px-6 py-3 hover:opacity-90 whitespace-nowrap leading-none
+                     h-auto min-h-[48px] min-w-[180px]"
         >
           Start Your Quote
         </Link>
         <Link
           href="/products"
-          className="inline-flex items-center justify-center rounded-full px-6 py-3 border border-white/30 bg-white/5 backdrop-blur hover:bg-white/10"
+          className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/5 backdrop-blur
+                     px-6 py-3 hover:bg-white/10 whitespace-nowrap leading-none
+                     h-auto min-h-[48px] min-w-[150px]"
         >
           See Brands
         </Link>
       </div>
     </>
-  );
-}
-
-function Docked() {
-  return (
-    <div className="w-full max-w-[1200px] text-center px-4">
-      <HeroCopy />
-    </div>
   );
 }
