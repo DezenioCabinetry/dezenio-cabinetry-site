@@ -8,11 +8,7 @@ export default function HomePage() {
     <main className="relative bg-black text-white overflow-x-hidden">
       <Header />
       <Hero />
-
-      {/* 👇 Spacer to prevent footer clash with fixed hero text */}
-      <div className="h-[100vh] md:h-[75vh] lg:h-[60vh]" />
-
-      {/* Add any real sections here later if needed */}
+      {/* No spacer needed — the Hero computes the exact landing space. */}
     </main>
   );
 }
