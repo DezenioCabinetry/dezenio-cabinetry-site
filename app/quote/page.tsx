@@ -1,35 +1,37 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
+import Hero from "../components/Hero";
 import QuoteForm from "../components/QuoteForm";
 
 export default function QuotePage() {
   return (
-    <main className="relative w-full min-h-screen overflow-hidden text-white font-sans">
-      {/* ✅ BACKGROUND IMAGE — no dimming */}
-      <div className="absolute inset-0 -z-20">
-        <Image
-          src="/backgrounds/kitchen-dark-modern.png"
-          alt="Luxury Kitchen Background"
-          fill
-          priority
-          className="object-cover object-center"
-        />
-      </div>
+    <Hero
+      imageSrc="/backgrounds/kitchen-dark-modern.png"
+      imageAlt="Luxury kitchen background"
+      overlayStrength="medium" // ← was strong; cleaner/brighter
+      dockNudgePx={0}
+      title={<span className="block">Get a Cabinetry Quote</span>}
+      subtitle={
+        <>
+          Tell us about your project — we’ll follow up with pricing, lead times,
+          and product options based on your layout and needs.
+        </>
+      }
+      below={
+        <div className="w-full max-w-[980px] mx-auto flex flex-col items-center gap-4">
+          <Link href="/products" className="chip chip-lg">
+            ← Back to Products
+          </Link>
 
-      {/* ✅ SOFT GLASS OVERLAY (no heavy gradient) */}
-      <section className="relative z-10 pt-44 pb-24 px-4 sm:px-8 max-w-3xl mx-auto">
-        <div className="bg-black/50 backdrop-blur-lg rounded-2xl px-10 py-12 shadow-xl border border-white/10">
-          <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 tracking-tight">
-            Get a Cabinetry Quote
-          </h1>
-          <p className="text-center text-white/80 max-w-2xl mx-auto mb-10 text-lg leading-relaxed">
-            Tell us about your project — we’ll follow up with pricing, lead
-            times, and product options based on your layout and needs.
-          </p>
-          <QuoteForm />
+          <div className="glass-hero w-full rounded-2xl p-5 sm:p-7">
+            <QuoteForm />
+            <p className="mt-4 text-center text-xs text-white/70">
+              We typically respond within one business day.
+            </p>
+          </div>
         </div>
-      </section>
-    </main>
+      }
+    />
   );
 }

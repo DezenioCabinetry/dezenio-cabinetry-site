@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer
       id="site-footer"
-      className="mt-16 bg-black/60 border-t border-white/10 text-white"
+      className="bg-black/60 border-t border-white/10 text-white"
     >
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
