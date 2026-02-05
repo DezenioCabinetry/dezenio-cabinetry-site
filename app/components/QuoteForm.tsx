@@ -39,13 +39,26 @@ export default function QuoteForm() {
     }
   }
 
+  // ✅ unified inputs (same across all fields)
+  const inputBase =
+    "w-full rounded-2xl px-4 py-3 " +
+    "border border-white/12 bg-black/25 text-white placeholder-white/45 " +
+    "backdrop-blur-xl " +
+    "focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 " +
+    "transition";
+
+  const selectBase =
+    inputBase +
+    " appearance-none pr-10 " +
+    "bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),rgba(255,255,255,0.00))]";
+
+  const textareaBase = inputBase + " resize-y min-h-[160px] leading-relaxed";
+
+  const hint = "text-xs text-white/55 leading-relaxed";
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="space-y-6"
-      noValidate
-      style={{ maxWidth: 980, margin: "0 auto" }}
-    >
+    <form onSubmit={onSubmit} className="space-y-6" noValidate>
+      {/* Honeypot */}
       <input
         type="text"
         name="honeypot"
@@ -54,132 +67,167 @@ export default function QuoteForm() {
         autoComplete="off"
       />
 
-      {/* Contact */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <FieldWrap className="md:col-span-5" label="Full Name">
+      {/* ✅ Everything is one cohesive card section */}
+      <div className="space-y-6">
+        {/* Contact */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <FieldWrap className="md:col-span-5" label="Full Name">
+            <input
+              name="name"
+              required
+              className={inputBase}
+              placeholder="Jane Doe"
+              autoComplete="name"
+            />
+          </FieldWrap>
+
+          <FieldWrap className="md:col-span-5" label="Email">
+            <input
+              type="email"
+              name="email"
+              required
+              className={inputBase}
+              placeholder="you@example.com"
+              autoComplete="email"
+            />
+          </FieldWrap>
+
+          <FieldWrap className="md:col-span-2" label="Phone">
+            <input
+              name="phone"
+              className={inputBase}
+              placeholder="(615) 555-1234"
+              autoComplete="tel"
+            />
+          </FieldWrap>
+        </div>
+
+        {/* Address */}
+        <FieldWrap label="Project Address">
           <input
-            name="name"
+            ref={addressInputRef}
+            name="address"
             required
-            className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white placeholder-white/55 focus:outline-none focus:ring-2 focus:ring-white/30"
-            placeholder="Jane Doe"
-            autoComplete="name"
+            className={inputBase}
+            placeholder="1234 Oak St, Nashville, TN"
+            autoComplete="street-address"
           />
+
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            <span className={hint}>
+              Tip: include unit #, subdivision, or lot if applicable.
+            </span>
+          </div>
+
+          {/* Hidden geo fields */}
+          <input type="hidden" name="addressLine1" />
+          <input type="hidden" name="placeCity" />
+          <input type="hidden" name="placeRegion" />
+          <input type="hidden" name="placePostcode" />
+          <input type="hidden" name="placeCountry" />
+          <input type="hidden" name="lat" />
+          <input type="hidden" name="lng" />
         </FieldWrap>
 
-        <FieldWrap className="md:col-span-5" label="Email">
-          <input
-            type="email"
-            name="email"
+        {/* Project basics */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <FieldWrap className="md:col-span-4" label="Project Type">
+            <div className="relative">
+              <select
+                name="projectType"
+                className={selectBase}
+                defaultValue="Kitchen"
+              >
+                <option>Kitchen</option>
+                <option>Bathroom</option>
+                <option>Laundry</option>
+                <option>Closet</option>
+                <option>Other</option>
+              </select>
+              <Chevron />
+            </div>
+          </FieldWrap>
+
+          <FieldWrap className="md:col-span-4" label="Desired Start">
+            <input type="date" name="startDate" className={inputBase} />
+          </FieldWrap>
+
+          <FieldWrap className="md:col-span-4" label="Budget Range">
+            <div className="relative">
+              <select
+                name="budget"
+                className={selectBase}
+                defaultValue="10–25k"
+              >
+                <option value="<10k">&lt; $10k</option>
+                <option value="10–25k">$10–25k</option>
+                <option value="25–50k">$25–50k</option>
+                <option value="50k+">$50k+</option>
+              </select>
+              <Chevron />
+            </div>
+          </FieldWrap>
+        </div>
+
+        {/* Source */}
+        <FieldWrap label="How did you hear about us?">
+          <div className="relative">
+            <select
+              name="source"
+              className={selectBase}
+              defaultValue="Referral"
+            >
+              <option>Referral</option>
+              <option>Google</option>
+              <option>Instagram</option>
+              <option>Homeowner Group</option>
+              <option>Builder/Contractor</option>
+              <option>Other</option>
+            </select>
+            <Chevron />
+          </div>
+        </FieldWrap>
+
+        {/* Details */}
+        <FieldWrap label="Project Details">
+          <textarea
+            name="message"
             required
-            className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white placeholder-white/55 focus:outline-none focus:ring-2 focus:ring-white/30"
-            placeholder="you@example.com"
-            autoComplete="email"
+            rows={7}
+            className={textareaBase}
+            placeholder="Layout info, measurements, door style, finishes, timeline…"
           />
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            <span className={hint}>
+              Helpful: rough room dimensions, appliance sizes, and any
+              inspiration links.
+            </span>
+          </div>
         </FieldWrap>
 
-        <FieldWrap className="md:col-span-2" label="Phone">
-          <input
-            name="phone"
-            className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white placeholder-white/55 focus:outline-none focus:ring-2 focus:ring-white/30"
-            placeholder="(615)"
-            autoComplete="tel"
-          />
-        </FieldWrap>
-      </div>
-
-      {/* Address */}
-      <FieldWrap label="Project Address">
-        <input
-          ref={addressInputRef}
-          name="address"
-          required
-          className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white placeholder-white/55 focus:outline-none focus:ring-2 focus:ring-white/30"
-          placeholder="1234 Oak St, Nashville, TN"
-          autoComplete="street-address"
-        />
-        <input type="hidden" name="addressLine1" />
-        <input type="hidden" name="placeCity" />
-        <input type="hidden" name="placeRegion" />
-        <input type="hidden" name="placePostcode" />
-        <input type="hidden" name="placeCountry" />
-        <input type="hidden" name="lat" />
-        <input type="hidden" name="lng" />
-      </FieldWrap>
-
-      {/* Project basics */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <FieldWrap className="md:col-span-4" label="Project Type">
-          <select
-            name="projectType"
-            className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            defaultValue="Kitchen"
-          >
-            <option>Kitchen</option>
-            <option>Bathroom</option>
-            <option>Laundry</option>
-            <option>Closet</option>
-            <option>Other</option>
-          </select>
-        </FieldWrap>
-
-        <FieldWrap className="md:col-span-4" label="Desired Start">
-          <input
-            type="date"
-            name="startDate"
-            className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-          />
-        </FieldWrap>
-
-        <FieldWrap className="md:col-span-4" label="Budget Range">
-          <select
-            name="budget"
-            className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            defaultValue="10–25k"
-          >
-            <option value="<10k">&lt; $10k</option>
-            <option value="10–25k">$10–25k</option>
-            <option value="25–50k">$25–50k</option>
-            <option value="50k+">$50k+</option>
-          </select>
-        </FieldWrap>
-      </div>
-
-      <FieldWrap label="How did you hear about us?">
-        <select
-          name="source"
-          className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-          defaultValue="Referral"
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className={[
+            "w-full rounded-2xl px-6 py-3.5 font-semibold transition",
+            "bg-white text-black hover:opacity-95",
+            "disabled:opacity-60 disabled:cursor-not-allowed",
+            "shadow-[0_12px_40px_rgba(0,0,0,0.35)]",
+          ].join(" ")}
         >
-          <option>Referral</option>
-          <option>Google</option>
-          <option>Instagram</option>
-          <option>Homeowner Group</option>
-          <option>Builder/Contractor</option>
-          <option>Other</option>
-        </select>
-      </FieldWrap>
+          {status === "sending" ? "Sending…" : "Submit Quote Request"}
+        </button>
 
-      <FieldWrap label="Project Details">
-        <textarea
-          name="message"
-          required
-          rows={6}
-          className="w-full px-4 py-2.5 rounded-lg border border-white/15 bg-black/35 text-white placeholder-white/55 focus:outline-none focus:ring-2 focus:ring-white/30"
-          placeholder="Layout info, measurements, door style, finishes, timeline…"
-        />
-      </FieldWrap>
-
-      <button
-        type="submit"
-        disabled={status === "sending"}
-        className="w-full rounded-xl bg-white text-black px-6 py-3.5 font-semibold hover:bg-gray-100 transition disabled:opacity-60"
-      >
-        {status === "sending" ? "Sending…" : "Submit Quote Request"}
-      </button>
-
-      {status === "error" && (
-        <p className="text-red-300 text-center text-sm">Error: {error}</p>
-      )}
+        {/* Error */}
+        {status === "error" && (
+          <div className="rounded-2xl border border-red-300/25 bg-red-500/10 px-4 py-3 text-center">
+            <p className="text-red-200 text-sm">
+              <span className="font-semibold">Error:</span> {error}
+            </p>
+          </div>
+        )}
+      </div>
     </form>
   );
 }
@@ -195,10 +243,27 @@ function FieldWrap({
 }) {
   return (
     <div className={className}>
-      <label className="block text-xs font-medium tracking-wide text-white/75 mb-2">
+      <label className="block text-[11px] uppercase tracking-[0.22em] text-white/60 mb-2">
         {label}
       </label>
       {children}
     </div>
+  );
+}
+
+function Chevron() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+        clipRule="evenodd"
+      />
+    </svg>
   );
 }

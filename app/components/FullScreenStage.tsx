@@ -35,17 +35,20 @@ export default function FullScreenStage({
   poster,
   children,
   className,
-  overlayDarkness = 18, // ↓ was 30; brighter, still readable
+  overlayDarkness = 18,
   safeTop = 110,
   safeBottom = 140,
   center = false,
   objectPosition = "center center",
   parallax = false,
 }: Props) {
+  const hasVideo = Boolean(videoSrc);
+  const hasBg = Boolean(bg);
+
   return (
     <main className={cn("relative w-full min-h-screen text-white", className)}>
-      {/* Background */}
-      {parallax && bg && (
+      {/* Background (parallax image) */}
+      {parallax && hasBg && !hasVideo && (
         <div
           className="fixed inset-0 -z-20 bg-cover bg-center"
           style={{
@@ -56,9 +59,10 @@ export default function FullScreenStage({
         />
       )}
 
-      {!parallax && (
+      {/* Background (non-parallax video or image) */}
+      {(!parallax || hasVideo) && (
         <div className="absolute inset-0 -z-20 pointer-events-none" aria-hidden>
-          {videoSrc ? (
+          {hasVideo ? (
             <video
               autoPlay
               muted
@@ -72,9 +76,9 @@ export default function FullScreenStage({
               <source src={videoSrc} />
             </video>
           ) : (
-            bg && (
+            hasBg && (
               <Image
-                src={bg}
+                src={bg!}
                 alt=""
                 fill
                 priority
@@ -87,20 +91,28 @@ export default function FullScreenStage({
         </div>
       )}
 
-      {/* Overlay (lighter + premium vignette) */}
+      {/* Overlay (consistent “premium” stack) */}
       <div className="fixed inset-0 -z-10 pointer-events-none" aria-hidden>
+        {/* base darkness */}
         <div
           className="absolute inset-0"
           style={{ background: `rgba(0,0,0,${overlayDarkness / 100})` }}
         />
-        {/* subtle vignette + top lift (makes it feel cleaner, not muddy) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/35" />
+
+        {/* top lift -> keeps header glass from feeling muddy */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/45" />
+
+        {/* subtle center glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),transparent_55%)]" />
+
+        {/* vignette corners */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))]" />
       </div>
 
       {/* Content */}
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-8">
         <div style={{ height: safeTop }} aria-hidden />
+
         {center ? (
           <div
             className="flex flex-col justify-center"
@@ -113,6 +125,7 @@ export default function FullScreenStage({
         ) : (
           children
         )}
+
         <div style={{ height: safeBottom }} aria-hidden />
       </div>
     </main>

@@ -1,11 +1,7 @@
+// app/lib/utils.ts
 import clsx, { type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-/**
- * Utility to conditionally combine Tailwind CSS classes.
- * Example:
- * cn("btn", isActive && "btn-active") → "btn btn-active"
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

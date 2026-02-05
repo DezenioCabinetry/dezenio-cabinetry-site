@@ -16,7 +16,6 @@ export type Brand = {
   name: string;
   tagline: string;
 
-  // Images live in /public
   heroImage: string; // e.g. "/brands/kith-hero.png"
   cardImage: string; // e.g. "/brands/kith.png"
 
@@ -59,18 +58,22 @@ const BRANDS: Brand[] = [
       priceTier: "$$",
       note: "*Lead times are typical ranges and may vary by door/finish and factory volume.",
     },
-    // You said Kith should have 2–3 brochures.
-    // Drop your real URLs here (PDFs or Publuu) and they will render automatically.
     brochures: [
       {
         title: "Kith Kitchens Guide",
         type: "link",
-        url: "https://www.kithkitchens.com/",
-        note: "Replace with the actual PDF/Publuu link(s) when ready.",
+        url: "https://issuu.com/cedarhillsmedia/docs/kith_kitchens_guide",
       },
-      // Add 1–2 more when you have them:
-      // { title: "Kith Door Styles", type: "pdf", url: "https://..." },
-      // { title: "Kith Finishes", type: "pdf", url: "https://..." },
+      {
+        title: "Kith Guide (Oct 2024)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/kith-guide-october2024-85x11-mudroom_cover-pages",
+      },
+      {
+        title: "Kith Guide (2022)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/kith-guide2022-vfinal_jc",
+      },
     ],
   },
 
@@ -97,10 +100,37 @@ const BRANDS: Brand[] = [
       priceTier: "$$$",
       note: "*Confirm current factory lead times before order submission.",
     },
-    // Keep these if you already have your Mouser brochure links elsewhere
     brochures: [
-      // Example placeholders — replace or remove if you don’t want them:
-      // { title: "Mouser Combined Literature (2024)", type: "pdf", url: "https://..." },
+      {
+        title: "Combined Literature (2024)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/2024_combined_literature-9-25",
+      },
+      {
+        title: "Master Layout (2023)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/mc-cedp_2023_master_layout_2_",
+      },
+      {
+        title: "Mouser Guide (2022)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/mouser-guide2022-verfinal-pages-no-marks",
+      },
+      {
+        title: "Doors / Paints / Stains (2022)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/mouser-doors-paints-stains-2022-vfinal-spreads",
+      },
+      {
+        title: "Large Insert (17x8)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/mouser-large-insert-17x8-vfinal-spread",
+      },
+      {
+        title: "Stoll Hood Literature (2022)",
+        type: "link",
+        url: "https://issuu.com/cedarhillsmedia/docs/mc_stoll_hood_literature_2022_1_",
+      },
     ],
   },
 
@@ -127,6 +157,7 @@ const BRANDS: Brand[] = [
       priceTier: "$$",
       note: "*Lead times are typical ranges and may vary.",
     },
+    brochures: [],
   },
 
   {
@@ -154,9 +185,9 @@ const BRANDS: Brand[] = [
     },
     brochures: [
       {
-        title: "ProCraft Brochure (2024)",
+        title: "ProCraft Accessory Catalog",
         type: "pdf",
-        url: "https://content.app-sources.com/s/90786209979408084/uploads/Resources/ProCraft_Brochure_2024-8342080.pdf",
+        url: "https://content.app-sources.com/s/90786209979408084/uploads/Resources/ProCraft_Accessory_Catalog-9098086.pdf",
       },
       {
         title: "Milania Catalog (Q1 2026)",
@@ -164,9 +195,9 @@ const BRANDS: Brand[] = [
         url: "https://content.app-sources.com/s/90786209979408084/uploads/Resources/Milania_Catalog_Q1_2026-9097799.pdf",
       },
       {
-        title: "ProCraft Accessory Catalog",
+        title: "ProCraft Brochure (2024)",
         type: "pdf",
-        url: "https://content.app-sources.com/s/90786209979408084/uploads/Resources/ProCraft_Accessory_Catalog-9098086.pdf",
+        url: "https://content.app-sources.com/s/90786209979408084/uploads/Resources/ProCraft_Brochure_2024-8342080.pdf",
       },
       {
         title: "ProCraft Flipbook (Publuu)",
@@ -194,6 +225,23 @@ const BRANDS: Brand[] = [
       priceTier: "$",
       note: "*Confirm current lead times.",
     },
+    brochures: [
+      {
+        title: "Adornus Alusso Brochure",
+        type: "pdf",
+        url: "https://static1.squarespace.com/static/6080624b9a059244d6bfaf24/t/69779d5404403367a80bbb3e/1769446740257/Adornus+Alusso+Brochure.pdf",
+      },
+      {
+        title: "Adornus Designer Brochure",
+        type: "pdf",
+        url: "https://static1.squarespace.com/static/6080624b9a059244d6bfaf24/t/69779c66f0790a131139d5bd/1769446502188/Adornus+Designer+Brochure+Final.pdf",
+      },
+      {
+        title: "Adornus Essential Brochure",
+        type: "pdf",
+        url: "https://static1.squarespace.com/static/6080624b9a059244d6bfaf24/t/69779c0b3a2e8e4baf23956e/1769446411567/Adornus+Essential+Brochure.pdf",
+      },
+    ],
   },
 
   {
@@ -216,6 +264,7 @@ const BRANDS: Brand[] = [
       styleCoverage: "Modern · Transitional · Traditional",
       priceTier: "$$–$$$",
     },
+    brochures: [],
   },
 ];
 

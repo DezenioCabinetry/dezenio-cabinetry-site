@@ -5,6 +5,12 @@ import Hero from "../../components/Hero";
 import BackToProducts from "../../components/BackToProducts";
 
 export default function QuickShipPage() {
+  // ✅ Tailwind-only standardized pills
+  const pill =
+    "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full " +
+    "border border-white/20 bg-white/5 text-white/90 text-sm font-semibold " +
+    "backdrop-blur-xl hover:bg-white/10 hover:border-white/30 transition";
+
   return (
     <Hero
       imageSrc="/backgrounds/rta-hero.jpg" // put your RTA hero image here
@@ -22,10 +28,10 @@ export default function QuickShipPage() {
         <div className="flex flex-col items-center gap-4">
           <BackToProducts />
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            <Link href="/products/procraft" className="chip chip-lg">
+            <Link href="/products/procraft" className={pill}>
               ProCraft
             </Link>
-            <Link href="/products/adornus" className="chip chip-lg">
+            <Link href="/products/adornus" className={pill}>
               Adornus
             </Link>
           </div>

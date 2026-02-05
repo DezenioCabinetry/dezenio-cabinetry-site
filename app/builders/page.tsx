@@ -22,129 +22,192 @@ export default function BuildersPage() {
     },
     {
       icon: ClipboardList,
-      title: "Spec‑Accurate Quotes",
+      title: "Spec-Accurate Quotes",
       body: "Fast takeoffs from plans—appliance panels, trims, hardware dialed in.",
     },
     {
       icon: Clock,
-      title: "Lead‑Time Guidance",
-      body: "Up‑front timelines by line/finish so you can schedule confidently.",
+      title: "Lead-Time Guidance",
+      body: "Up-front timelines by line/finish so you can schedule confidently.",
     },
     {
       icon: Truck,
-      title: "Job‑Site Logistics",
+      title: "Job-Site Logistics",
       body: "Coordinated deliveries and staging; protected storage when required.",
     },
     {
       icon: Ruler,
       title: "Field Measures",
-      body: "On‑site verification before order release; clean change‑order flow.",
+      body: "On-site verification before order release; clean change-order flow.",
     },
     {
       icon: ShieldCheck,
       title: "Warranty Support",
-      body: "Manufacturer parts + 1‑year workmanship install support.",
+      body: "Manufacturer parts + 1-year workmanship install support.",
     },
     {
       icon: DollarSign,
       title: "Value Engineering",
-      body: "Options across custom, semi‑custom, and RTA to hit budget targets.",
+      body: "Options across custom, semi-custom, and RTA to hit budget targets.",
     },
   ];
 
   return (
     <main className="relative min-h-screen w-full text-white">
-      {/* Fixed background (same treatment as home) */}
+      {/* Background */}
       <div className="fixed inset-0 -z-10">
         <Image
-          src="/Dezenio-HomeBG.png" // swap if you want a builders-specific photo later
+          src="/Dezenio-HomeBG.png"
           alt="Dezenio background"
           fill
           priority
           className="object-cover object-center"
         />
-        {/* dark glass for readability */}
-        <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/60" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.35), transparent, rgba(0,0,0,0.72))",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(255,255,255,0.06), transparent 55%)",
+          }}
+        />
       </div>
 
-      {/* CONTENT */}
-      <section className="mx-auto max-w-5xl px-6 pt-[140px] pb-24">
-        {/* Eyebrow */}
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm">
-          <HardHat className="h-4 w-4" />
-          <span>Trade Partners</span>
-        </div>
-
-        {/* Centered heading + subhead (like home) */}
+      <section className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 pt-[calc(var(--header-h)+28px)] pb-24">
+        {/* Hero */}
         <div className="text-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold leading-tight">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/30 backdrop-blur-xl px-4 py-2 text-[11px] tracking-[0.32em] uppercase text-white/80">
+            <HardHat className="h-4 w-4 opacity-80" />
+            Trade Partners
+          </div>
+
+          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight">
             Builders Program
           </h1>
-          <p className="mx-auto mt-4 max-w-3xl text-lg md:text-xl text-gray-200">
-            Reliable cabinetry supply, job‑site coordination, and white‑glove
+
+          <p className="mt-4 max-w-3xl mx-auto text-white/80">
+            Reliable cabinetry supply, job-site coordination, and white-glove
             installs — built for GC schedules and client expectations.
           </p>
 
-          {/* CTAs */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/quote"
-              className="rounded-full bg-white text-black px-6 py-3 font-medium hover:bg-white/90"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-white text-black text-sm font-semibold hover:opacity-90 transition"
             >
               Join the Partner List
             </Link>
-            <Link
+
+            <a
               href="mailto:info@dezeniocabinetry.com"
-              className="rounded-full border border-white/25 px-6 py-3 font-medium hover:border-white/40"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/5 text-white/90 text-sm font-semibold backdrop-blur-xl hover:bg-white/10 hover:border-white/30 transition"
             >
               Email Our Team
-            </Link>
-          </div>
-
-          <p className="mt-3 text-sm text-gray-300">
-            Prefer a call?{" "}
-            <a href="tel:16154742004" className="underline underline-offset-2">
-              (615) 474‑2004
             </a>
-          </p>
+
+            <a
+              href="tel:+16154742004"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/5 text-white/90 text-sm font-semibold backdrop-blur-xl hover:bg-white/10 hover:border-white/30 transition"
+            >
+              (615) 474-2004
+            </a>
+          </div>
         </div>
 
-        {/* VERTICAL OVERLAY TEXT (no cards) */}
-        <div className="mt-14 space-y-8">
-          {lines.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="group">
-              {/* subtle line accent; no boxes */}
-              <div className="flex items-start gap-4">
-                <div className="mt-1">
-                  <Icon className="h-5 w-5 opacity-80" />
+        {/* Content cards (consistent with Quote/Brand pages) */}
+        <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left: Offer / Services */}
+          <section className="glass-card">
+            <div className="p-6 sm:p-8">
+              <div className="text-[11px] tracking-[0.32em] uppercase text-white/60">
+                What you get
+              </div>
+
+              <div className="mt-5 space-y-4">
+                {lines.map(({ icon: Icon, title, body }) => (
+                  <div
+                    key={title}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5">
+                        <Icon className="h-5 w-5 text-white/75" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-lg font-semibold">{title}</div>
+                        <div className="mt-1 text-white/70">{body}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Right: Process + CTA */}
+          <section className="glass-card">
+            <div className="p-6 sm:p-8">
+              <div className="text-[11px] tracking-[0.32em] uppercase text-white/60">
+                How it works
+              </div>
+
+              <div className="mt-4 space-y-4 text-white/80">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
+                  <div className="font-semibold text-white">1) Send plans</div>
+                  <div className="mt-1 text-white/70">
+                    PDFs, sketches, elevations, or a simple layout—whatever
+                    you’ve got.
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl md:text-2xl font-semibold tracking-tight">
-                    {title}
-                  </h3>
-                  <p className="mt-2 max-w-3xl text-gray-200">{body}</p>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
+                  <div className="font-semibold text-white">
+                    2) We spec + quote
+                  </div>
+                  <div className="mt-1 text-white/70">
+                    We build a clean cabinet list, confirm panels/trims, and
+                    price to your schedule.
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
+                  <div className="font-semibold text-white">
+                    3) Order + coordinate
+                  </div>
+                  <div className="mt-1 text-white/70">
+                    Lead-time confirmation, delivery staging, and install
+                    coordination if needed.
+                  </div>
                 </div>
               </div>
-              {/* divider */}
-              <div className="mt-6 h-px w-full bg-gradient-to-r from-white/30 via-white/15 to-transparent" />
-            </div>
-          ))}
-        </div>
 
-        {/* Bottom CTAs */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/quote"
-            className="rounded-lg bg-white text-black px-5 py-3 font-medium hover:bg-white/90"
-          >
-            Request Cabinetry Pricing
-          </Link>
-          <Link
-            href="/products"
-            className="rounded-lg border border-white/20 px-5 py-3 font-medium hover:border-white/40"
-          >
-            View Brands & Lines
-          </Link>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/quote"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-white text-black text-sm font-semibold hover:opacity-90 transition"
+                >
+                  Request Cabinetry Pricing
+                </Link>
+                <Link
+                  href="/products"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/5 text-white/90 text-sm font-semibold backdrop-blur-xl hover:bg-white/10 hover:border-white/30 transition"
+                >
+                  View Brands & Lines
+                </Link>
+              </div>
+
+              <div className="mt-4 text-xs text-white/60">
+                Response time: typically within one business day.
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     </main>

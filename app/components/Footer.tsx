@@ -6,15 +6,21 @@ export default function Footer() {
   return (
     <footer
       id="site-footer"
-      className="bg-black/60 border-t border-white/10 text-white"
+      className="bg-[#070708] border-t border-white/10 text-white"
     >
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand / blurb */}
           <div>
             <div className="text-xl font-semibold">Dezenio Cabinetry</div>
+
+            {/* ✅ Replace DBA line */}
+            <div className="mt-1 text-[11px] tracking-[0.22em] uppercase text-white/60">
+              A division of Dezenio Draft Design, Inc.
+            </div>
+
             <p className="mt-3 text-white/80">
-              Premium American‑made cabinetry and cost‑conscious RTA lines —
+              Premium American-made cabinetry and cost-conscious RTA lines —
               designed, supplied, and installed with precision.
             </p>
           </div>
@@ -25,7 +31,7 @@ export default function Footer() {
             <ul className="mt-3 space-y-2 text-white/85">
               <li>
                 <a href="tel:+16154742004" className="hover:text-white">
-                  (615) 474‑2004
+                  (615) 474-2004
                 </a>
               </li>
               <li>
@@ -80,6 +86,7 @@ export default function Footer() {
                   />
                 </svg>
               </Social>
+
               <Social href="https://facebook.com" label="Facebook">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
@@ -88,6 +95,7 @@ export default function Footer() {
                   />
                 </svg>
               </Social>
+
               <Social href="https://www.pinterest.com" label="Pinterest">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
@@ -96,11 +104,13 @@ export default function Footer() {
                   />
                 </svg>
               </Social>
+
               <Social href="https://www.houzz.com" label="Houzz">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path fill="currentColor" d="M4 3v9l8-4.5V21l8-4.5V3z" />
                 </svg>
               </Social>
+
               <Social href="https://youtube.com" label="YouTube">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
@@ -147,7 +157,7 @@ function Social({
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      className="p-2 rounded-full bg-white/8 border border-white/15 hover:bg-white/15 hover:border-white/25 transition"
+      className="p-2 rounded-full bg-white/7 border border-white/12 hover:bg-white/12 hover:border-white/22 transition"
       title={label}
     >
       <span className="text-white/90">{children}</span>

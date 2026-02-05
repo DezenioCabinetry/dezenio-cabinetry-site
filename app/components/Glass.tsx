@@ -31,7 +31,8 @@ export default function Glass<T extends React.ElementType = "div">({
     <Comp
       {...rest}
       className={cn(
-        "glass rounded-3xl border border-white/12 bg-white/8 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,.35)]",
+        // ✅ Tailwind-only “glass” recipe
+        "rounded-3xl border border-white/12 bg-white/8 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,.35)]",
         padding === "none"
           ? "p-0"
           : padding === "sm"

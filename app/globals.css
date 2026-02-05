@@ -1,291 +1,317 @@
 /* app/globals.css */
-/* IMPORTANT: No Tailwind imports here. Plain CSS only. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   DEZENIO CABINETRY — Unified Luxe System
+   Goal: ONE consistent language across all pages:
+   - fixed background stage
+   - soft dark overlay
+   - centered container
+   - optional hero glass panel
+   - consistent glass cards + pills
+========================================================= */
 
 :root {
-  --bg: #050607;
-  --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.72);
+  /* Keep in sync with Header height */
+  --header-h: 92px;
 
-  --panel: rgba(18, 19, 20, 0.62);
-  --panel2: rgba(26, 27, 28, 0.62);
+  /* Container width */
+  --dc-max: 1120px;
 
-  --stroke: rgba(255, 255, 255, 0.12);
-  --stroke2: rgba(255, 255, 255, 0.16);
+  /* Glass + borders */
+  --dc-glass: rgba(0, 0, 0, 0.42);
+  --dc-glass-2: rgba(0, 0, 0, 0.52);
+  --dc-card: rgba(255, 255, 255, 0.06);
+  --dc-border: rgba(255, 255, 255, 0.14);
+  --dc-border-2: rgba(255, 255, 255, 0.2);
 
-  --shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
-  --radius: 22px;
+  /* Text */
+  --dc-text: rgba(255, 255, 255, 0.92);
+  --dc-text-2: rgba(255, 255, 255, 0.78);
+
+  /* Shadows */
+  --dc-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+
+  /* Radius */
+  --dc-r-xl: 26px;
+  --dc-r-lg: 22px;
+  --dc-r-md: 16px;
+
+  /* Blur */
+  --dc-blur: 14px;
 }
 
-* {
-  box-sizing: border-box;
-}
+/* =========================
+   Base / Reset
+========================= */
+
 html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Helvetica,
-    Arial,
-    "Apple Color Emoji",
-    "Segoe UI Emoji";
+  background: #0b0b0c;
+  color: var(--dc-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
 img {
   max-width: 100%;
   height: auto;
-  display: block;
 }
 
-.dc-page {
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
+::selection {
+  background: rgba(255, 255, 255, 0.18);
 }
 
-.dc-stage {
-  position: fixed;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  transform: scale(1.02);
-  filter: saturate(1.05) contrast(1.05);
-  z-index: 0;
-}
+/* =========================
+   Layout Helpers (use everywhere)
+========================= */
+@layer components {
+  /* Page wrapper */
+  .dc-page {
+    position: relative;
+    min-height: 100vh;
+    color: var(--dc-text);
+    overflow-x: hidden;
+  }
 
-.dc-stageOverlay {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      ellipse at 50% 20%,
-      rgba(0, 0, 0, 0.25),
-      rgba(0, 0, 0, 0.82) 60%,
-      rgba(0, 0, 0, 0.92)
-    ),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.85));
-}
+  /* Fixed background stage (if you use CSS bg-image) */
+  .dc-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.03);
+  }
 
-.dc-content {
-  position: relative;
-  z-index: 1;
-  padding: 110px 24px 90px;
-}
+  /* Overlay to keep text readable */
+  .dc-stageOverlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        60% 45% at 50% 20%,
+        rgba(0, 0, 0, 0.12),
+        rgba(0, 0, 0, 0.72)
+      ),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.72));
+  }
 
-.dc-center {
-  max-width: 1060px;
-  margin: 0 auto;
-  text-align: center;
-}
+  /* Content spacing: same on every page */
+  .dc-content {
+    position: relative;
+    z-index: 2;
+    padding-top: calc(var(--header-h) + 48px);
+    padding-bottom: 72px;
+  }
 
-.dc-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(10px);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-}
+  /* Center container */
+  .dc-container {
+    max-width: var(--dc-max);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
 
-.dc-title {
-  margin: 18px 0 8px;
-  font-size: clamp(38px, 5vw, 64px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
+  /* Center text blocks */
+  .dc-center {
+    text-align: center;
+  }
 
-.dc-sub {
-  margin: 0 auto 22px;
-  max-width: 760px;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.6;
-}
+  /* =========================
+     Typography blocks
+  ========================= */
 
-.dc-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  margin: 18px 0 26px;
-}
+  .dc-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.32);
+    border: 1px solid var(--dc-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 
-.dc-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(10px);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
-  transition:
-    transform 0.15s ease,
-    border-color 0.15s ease,
-    background 0.15s ease;
-  cursor: pointer;
-}
+  .dc-title {
+    margin: 16px 0 10px;
+    font-size: clamp(44px, 5vw, 68px);
+    line-height: 1.05;
+    font-weight: 800;
+    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+  }
 
-.dc-btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--stroke2);
-  background: rgba(0, 0, 0, 0.42);
-}
+  .dc-subtitle {
+    margin: 0 auto;
+    max-width: 760px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--dc-text-2);
+    text-shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
+  }
 
-.dc-btnPrimary {
-  background: rgba(255, 255, 255, 0.92);
-  color: rgba(0, 0, 0, 0.92);
-  border-color: rgba(255, 255, 255, 0.35);
-}
+  /* =========================
+     Unified Hero Panel (optional)
+     Use when you want “the big glass card”
+  ========================= */
+  .dc-heroPanel {
+    border-radius: var(--dc-r-xl);
+    padding: 22px 22px;
+    border: 1px solid var(--dc-border);
+    background: var(--dc-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--dc-shadow);
+  }
 
-.dc-btnPrimary:hover {
-  background: rgba(255, 255, 255, 0.98);
-}
+  /* =========================
+     Buttons / Pills (unify ALL CTAs)
+  ========================= */
+  .dc-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--dc-border);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    text-decoration: none;
+    backdrop-filter: blur(var(--dc-blur));
+    -webkit-backdrop-filter: blur(var(--dc-blur));
+    transition:
+      transform 160ms ease,
+      background 160ms ease,
+      border-color 160ms ease,
+      opacity 160ms ease;
+    cursor: pointer;
+  }
 
-.dc-grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 16px;
-}
+  .dc-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--dc-border-2);
+    transform: translateY(-1px);
+  }
 
-@media (max-width: 860px) {
+  .dc-pill:active {
+    transform: translateY(0px);
+    opacity: 0.95;
+  }
+
+  .dc-pill--primary {
+    background: rgba(255, 255, 255, 0.92);
+    color: rgba(0, 0, 0, 0.92);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .dc-pill--primary:hover {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* =========================
+     Cards (THIS is how you keep pages consistent)
+  ========================= */
+  .dc-card {
+    border-radius: var(--dc-r-lg);
+    padding: 18px 18px;
+    border: 1px solid var(--dc-border);
+    background: var(--dc-glass-2);
+    backdrop-filter: blur(var(--dc-blur));
+    -webkit-backdrop-filter: blur(var(--dc-blur));
+    box-shadow: var(--dc-shadow);
+  }
+
+  .dc-cardSoft {
+    border-radius: var(--dc-r-md);
+    padding: 14px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .dc-cardTitle {
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .dc-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.14);
+    margin: 14px 0;
+  }
+
+  /* Two-column card grid */
   .dc-grid2 {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: start;
   }
-}
 
-.dc-panel {
-  background: var(--panel);
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(14px);
-  padding: 18px 18px 16px;
-  text-align: left;
-  min-height: 220px;
-}
+  @media (max-width: 980px) {
+    .dc-grid2 {
+      grid-template-columns: 1fr;
+    }
+  }
 
-.dc-h2 {
-  margin: 0 0 12px;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.dc-list {
-  margin: 0;
-  padding-left: 18px;
-  color: rgba(255, 255, 255, 0.86);
-  line-height: 1.8;
-  font-size: 14px;
-}
-
-.dc-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 14px 0 12px;
-}
-
-.dc-kicker {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.62);
-  margin-bottom: 10px;
-}
-
-.dc-brochures {
-  display: grid;
-  gap: 10px;
-}
-
-.dc-brochureBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 13px;
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.dc-brochureBtn:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.dc-note {
-  margin: 10px 0 0;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.dc-glanceGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-@media (max-width: 520px) {
+  /* Small “stats” grid inside cards */
   .dc-glanceGrid {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
   }
-}
 
-.dc-glanceCard {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  padding: 12px 12px 10px;
-}
+  @media (max-width: 520px) {
+    .dc-glanceGrid {
+      grid-template-columns: 1fr;
+    }
+  }
 
-.dc-glanceLabel {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-  margin-bottom: 6px;
-}
+  .dc-glanceLabel {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 6px;
+  }
 
-.dc-glanceValue {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
-}
+  .dc-glanceValue {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.92);
+  }
 
-.dc-footnote {
-  margin: 12px 0 0;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.5;
+  .dc-footnote {
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  /* If any page has a big empty panel, kill it with this */
+  .dc-noGhostPanel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
