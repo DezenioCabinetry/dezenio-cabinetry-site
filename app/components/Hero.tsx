@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type HeroProps = {
   imageSrc?: string;
@@ -21,7 +22,38 @@ type HeroProps = {
 
   // control where `below` renders
   belowMode?: "both" | "overlay" | "dock";
+
+  /**
+   * OPTIONAL: scroll-driven chapters for homepage story.
+   * If provided, chapters override title/subtitle/below while on homepage.
+   * If not provided, we’ll use a built-in default chapter set on "/".
+   */
+  chapters?: Chapter[];
+  /**
+   * Controls how sensitive chapter switching is. Default 0.06.
+   * Lower = switches faster, higher = more stable.
+   */
+  chapterHysteresis?: number;
 };
+
+type ChapterCTA = {
+  label: string;
+  href: string;
+  variant?: "primary" | "ghost";
+};
+
+type Chapter = {
+  id: string;
+  at: number; // 0..1 down the stitched image area
+  eyebrow?: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  ctas?: ChapterCTA[];
+};
+
+function clamp01(n: number) {
+  return Math.max(0, Math.min(1, n));
+}
 
 export default function Hero({
   imageSrc = "/Dezenio-HomeBG.png",
@@ -34,7 +66,11 @@ export default function Hero({
   overlayStrength = "base",
   stage = "auto",
   belowMode = "both",
+  chapters,
+  chapterHysteresis = 0.06,
 }: HeroProps) {
+  const pathname = usePathname();
+
   const DOCK_TRIGGER_OFFSET_PX = dockOffsetPx ?? 140;
   const DOCK_NUDGE_PX = dockNudgePx ?? 40;
 
@@ -44,6 +80,110 @@ export default function Hero({
   const [headerH, setHeaderH] = useState(80);
   const [dockH, setDockH] = useState(160);
   const [onImage, setOnImage] = useState(true);
+
+  // Chapter state
+  const defaultHomeChapters: Chapter[] = useMemo(
+    () => [
+      {
+        id: "intro",
+        at: 0.06,
+        eyebrow: "Dezenio Cabinetry",
+        title: (
+          <>
+            <span className="block">Premium Cabinetry.</span>
+            <span className="block">Unmatched Execution.</span>
+          </>
+        ),
+        subtitle:
+          "American-made luxury lines and cost-conscious RTA options — designed, supplied, and installed with precision.",
+        ctas: [
+          { label: "Start Your Quote", href: "/quote", variant: "primary" },
+          { label: "See Brands", href: "/products", variant: "ghost" },
+        ],
+      },
+      {
+        id: "lines",
+        at: 0.25,
+        eyebrow: "Authorized Lines",
+        title: (
+          <>
+            <span className="block">Kith • Mouser • ProCraft</span>
+            <span className="block">Plus supporting lines.</span>
+          </>
+        ),
+        subtitle:
+          "Real lead-time guidance, finish help, and spec support — so orders land clean and installs stay on schedule.",
+        ctas: [
+          { label: "Explore Products", href: "/products", variant: "primary" },
+          { label: "Builders", href: "/builders", variant: "ghost" },
+        ],
+      },
+      {
+        id: "process",
+        at: 0.48,
+        eyebrow: "Design + Takeoff",
+        title: (
+          <>
+            <span className="block">Plan takeoffs that match</span>
+            <span className="block">the build — not guesses.</span>
+          </>
+        ),
+        subtitle:
+          "Appliance panels, fillers, trim, hardware, and install details accounted for before order day.",
+        ctas: [
+          { label: "Start Quote", href: "/quote", variant: "primary" },
+          { label: "Portfolio", href: "/portfolio", variant: "ghost" },
+        ],
+      },
+      {
+        id: "install",
+        at: 0.72,
+        eyebrow: "Delivery + Install",
+        title: (
+          <>
+            <span className="block">Protected delivery.</span>
+            <span className="block">Crisp installation.</span>
+          </>
+        ),
+        subtitle:
+          "Jobsite-ready coordination and clean installs that keep your project moving with confidence.",
+        ctas: [
+          { label: "Get a Quote", href: "/quote", variant: "primary" },
+          { label: "See Brands", href: "/products", variant: "ghost" },
+        ],
+      },
+      {
+        id: "cta",
+        at: 0.9,
+        eyebrow: "Let’s build it right",
+        title: (
+          <>
+            <span className="block">Ready when you are.</span>
+            <span className="block">Let’s price your project.</span>
+          </>
+        ),
+        subtitle:
+          "Upload plans or share scope. We respond fast with a clean next step.",
+        ctas: [
+          { label: "Start Your Quote", href: "/quote", variant: "primary" },
+          { label: "Products", href: "/products", variant: "ghost" },
+        ],
+      },
+    ],
+    [],
+  );
+
+  const useChapters =
+    pathname === "/" &&
+    stage === "auto" && // stitched scroll story mode
+    (chapters?.length ? true : true); // default chapters enabled on home
+
+  const chaptersToUse = useMemo(() => {
+    if (!useChapters) return [];
+    return chapters?.length ? chapters : defaultHomeChapters;
+  }, [useChapters, chapters, defaultHomeChapters]);
+
+  const [activeChapterIdx, setActiveChapterIdx] = useState(0);
 
   // ✅ Tailwind-only standardized pills (same as Products/Brand/Quote)
   const pill =
@@ -95,6 +235,7 @@ export default function Hero({
     };
   }, []);
 
+  // onImage toggle (your existing dock behavior)
   useEffect(() => {
     const onScrollOrResize = () => {
       const wrap = imgWrapRef.current;
@@ -113,6 +254,7 @@ export default function Hero({
     };
   }, [headerH, DOCK_TRIGGER_OFFSET_PX]);
 
+  // header float class (your existing behavior)
   useEffect(() => {
     const root = document.documentElement;
     if (onImage) root.classList.add("header-float");
@@ -120,13 +262,81 @@ export default function Hero({
     return () => root.classList.remove("header-float");
   }, [onImage]);
 
+  // ✅ NEW: chapter selection based on scroll progress through stitched image
+  useEffect(() => {
+    if (!useChapters) return;
+
+    const onScroll = () => {
+      const wrap = imgWrapRef.current;
+      if (!wrap) return;
+
+      const top = wrap.offsetTop;
+      const height = wrap.offsetHeight;
+      const viewY = window.scrollY + headerH;
+
+      // progress while within image (0..1)
+      const p = clamp01((viewY - top) / Math.max(1, height));
+
+      // pick nearest chapter by `at`, with light hysteresis to avoid jitter
+      const current = chaptersToUse[activeChapterIdx];
+      const currentDist = current ? Math.abs(current.at - p) : Infinity;
+
+      let best = activeChapterIdx;
+      let bestDist = currentDist;
+
+      for (let i = 0; i < chaptersToUse.length; i++) {
+        const d = Math.abs(chaptersToUse[i].at - p);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      }
+
+      // only switch if meaningfully closer than current
+      if (
+        best !== activeChapterIdx &&
+        bestDist + chapterHysteresis < currentDist
+      ) {
+        setActiveChapterIdx(best);
+      }
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [
+    useChapters,
+    chaptersToUse,
+    activeChapterIdx,
+    headerH,
+    chapterHysteresis,
+  ]);
+
   const renderBelowInOverlay =
     below && (belowMode === "both" || belowMode === "overlay");
   const renderBelowInDock =
     below && (belowMode === "both" || belowMode === "dock");
 
+  // Chapter-derived content (only on homepage in stitched mode)
+  const activeChapter = useChapters ? chaptersToUse[activeChapterIdx] : null;
+
+  const EffectiveTitle = activeChapter?.title ?? title;
+  const EffectiveSubtitle = activeChapter?.subtitle ?? subtitle;
+  const EffectiveCTAs = activeChapter?.ctas ?? null;
+  const EffectiveEyebrow = activeChapter?.eyebrow ?? null;
+
   const DefaultContent = () => (
     <>
+      {EffectiveEyebrow ? (
+        <div className="mb-2 text-[11px] sm:text-xs tracking-[0.18em] uppercase text-white/80">
+          {EffectiveEyebrow}
+        </div>
+      ) : null}
+
       <h1 className="font-extrabold leading-tight tracking-tight drop-shadow-[0_10px_35px_rgba(0,0,0,.65)] text-[clamp(2rem,7vw,5rem)]">
         <span className="block">Premium Cabinetry.</span>
         <span className="block">Unmatched Execution.</span>
@@ -137,7 +347,6 @@ export default function Hero({
         RTA options — designed, supplied, and installed with precision.
       </p>
 
-      {/* ✅ Standardized CTAs */}
       <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
         <Link href="/quote" className={pillPrimary}>
           Start Your Quote
@@ -151,21 +360,44 @@ export default function Hero({
 
   const OverlayContent = () => (
     <>
-      {title ? (
-        <div className="font-extrabold leading-tight tracking-tight drop-shadow-[0_10px_35px_rgba(0,0,0,.65)] text-[clamp(2rem,7vw,5rem)] text-center">
-          {title}
-        </div>
+      {EffectiveTitle ? (
+        <>
+          {EffectiveEyebrow ? (
+            <div className="mb-2 text-[11px] sm:text-xs tracking-[0.18em] uppercase text-white/80 text-center">
+              {EffectiveEyebrow}
+            </div>
+          ) : null}
+
+          <div className="font-extrabold leading-tight tracking-tight drop-shadow-[0_10px_35px_rgba(0,0,0,.65)] text-[clamp(2rem,7vw,5rem)] text-center">
+            {EffectiveTitle}
+          </div>
+        </>
       ) : (
         <DefaultContent />
       )}
 
-      {title && subtitle && (
+      {EffectiveTitle && EffectiveSubtitle && (
         <p className="mt-3 text-white/95 text-[clamp(1rem,2.6vw,1.25rem)] max-w-[72ch] mx-auto text-center">
-          {subtitle}
+          {EffectiveSubtitle}
         </p>
       )}
 
-      {title && renderBelowInOverlay ? (
+      {/* Chapter CTAs override standard CTAs */}
+      {EffectiveCTAs?.length ? (
+        <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+          {EffectiveCTAs.map((c) => (
+            <Link
+              key={c.href + c.label}
+              href={c.href}
+              className={c.variant === "primary" ? pillPrimary : pill}
+            >
+              {c.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
+      {EffectiveTitle && renderBelowInOverlay ? (
         <div className="mt-6">{below}</div>
       ) : null}
     </>
@@ -173,16 +405,38 @@ export default function Hero({
 
   const DockContent = () => (
     <>
-      {title ? (
+      {EffectiveTitle ? (
         <>
+          {EffectiveEyebrow ? (
+            <div className="mb-2 text-[11px] sm:text-xs tracking-[0.18em] uppercase text-white/80 text-center">
+              {EffectiveEyebrow}
+            </div>
+          ) : null}
+
           <div className="font-extrabold leading-tight tracking-tight drop-shadow-[0_10px_35px_rgba(0,0,0,.65)] text-[clamp(2rem,7vw,5rem)] text-center">
-            {title}
+            {EffectiveTitle}
           </div>
-          {subtitle ? (
+
+          {EffectiveSubtitle ? (
             <p className="mt-3 text-white/95 text-[clamp(1rem,2.6vw,1.25rem)] max-w-[72ch] mx-auto text-center">
-              {subtitle}
+              {EffectiveSubtitle}
             </p>
           ) : null}
+
+          {EffectiveCTAs?.length ? (
+            <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+              {EffectiveCTAs.map((c) => (
+                <Link
+                  key={c.href + c.label}
+                  href={c.href}
+                  className={c.variant === "primary" ? pillPrimary : pill}
+                >
+                  {c.label}
+                </Link>
+              ))}
+            </div>
+          ) : null}
+
           {renderBelowInDock ? <div className="mt-6">{below}</div> : null}
         </>
       ) : (

@@ -40,11 +40,15 @@ export default async function BrandPage({
   const glanceCard =
     "rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4";
 
+  // ✅ safe string for CSS url()
+  const heroUrl = brand.heroImage?.replace(/"/g, '\\"') ?? "";
+
   return (
     <main className="relative min-h-screen text-white">
+      {/* Background stage */}
       <div
         className="fixed inset-0 -z-20 bg-cover bg-center"
-        style={{ backgroundImage: `url(${brand.heroImage})` }}
+        style={{ backgroundImage: `url("${heroUrl}")` }}
         aria-hidden
       />
       <div className="fixed inset-0 -z-10 bg-black/40" aria-hidden />
@@ -65,7 +69,7 @@ export default async function BrandPage({
         aria-hidden
       />
 
-      <section className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 pt-[calc(var(--header-h)+26px)] pb-24">
+      <section className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 pt-[calc(var(--header-h)+22px)] pb-24">
         <div className="text-center">
           <div className="inline-flex items-center rounded-full border border-white/15 bg-black/30 backdrop-blur-xl px-4 py-2 text-[11px] tracking-[0.32em] uppercase text-white/80">
             {brand.badge}
@@ -79,9 +83,15 @@ export default async function BrandPage({
             {brand.tagline}
           </p>
 
+          {/* CTAs */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link className={pill} href={backToCategory}>
               ← Back to {brand.badge}
+            </Link>
+
+            {/* ✅ Brands anchor (matches Header/Footer) */}
+            <Link className={pill} href="/products#brands">
+              ← Back to Brands
             </Link>
 
             <Link className={pill} href="/products">
@@ -106,6 +116,7 @@ export default async function BrandPage({
         </div>
 
         <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Highlights + Brochures */}
           <section className={panel}>
             <div className="p-6 sm:p-8">
               <div className="text-[11px] tracking-[0.32em] uppercase text-white/60">
@@ -126,6 +137,7 @@ export default async function BrandPage({
             </div>
           </section>
 
+          {/* At a glance */}
           <section className={panel}>
             <div className="p-6 sm:p-8">
               <div className="text-[11px] tracking-[0.32em] uppercase text-white/60">

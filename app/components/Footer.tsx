@@ -14,7 +14,6 @@ export default function Footer() {
           <div>
             <div className="text-xl font-semibold">Dezenio Cabinetry</div>
 
-            {/* ✅ Replace DBA line */}
             <div className="mt-1 text-[11px] tracking-[0.22em] uppercase text-white/60">
               A division of Dezenio Draft Design, Inc.
             </div>
@@ -23,6 +22,19 @@ export default function Footer() {
               Premium American-made cabinetry and cost-conscious RTA lines —
               designed, supplied, and installed with precision.
             </p>
+
+            <p className="mt-3 text-white/70 text-sm">
+              Serving Middle TN — Nashville &amp; surrounding areas.
+            </p>
+
+            <a
+              href="https://dezeniodraftdesign.com"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-block text-white/80 hover:text-white underline underline-offset-4 decoration-white/20 hover:decoration-white/40 transition text-sm"
+            >
+              Visit our parent company: Dezenio Draft Design, Inc.
+            </a>
           </div>
 
           {/* Contact */}
@@ -57,6 +69,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/products#brands" className="hover:text-white">
+                  Brands
+                </Link>
+              </li>
+              <li>
                 <Link href="/quote" className="hover:text-white">
                   Get a Quote
                 </Link>
@@ -77,7 +94,7 @@ export default function Footer() {
           {/* Socials */}
           <div>
             <div className="text-lg font-semibold">Follow</div>
-            <div className="mt-3 flex items-center gap-3">
+            <div className="mt-3 flex items-center gap-3 flex-wrap">
               <Social href="https://instagram.com" label="Instagram">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
@@ -96,18 +113,12 @@ export default function Footer() {
                 </svg>
               </Social>
 
-              <Social href="https://www.pinterest.com" label="Pinterest">
+              <Social href="https://tiktok.com" label="TikTok">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
                     fill="currentColor"
-                    d="M12.04 2C6.58 2 3 5.66 3 10.02c0 3.04 1.71 4.76 2.7 4.76c.42 0 .66-1.16.66-1.49c0-.39-1-1.22-1-2.85c0-3.37 2.56-5.72 6.2-5.72c3 0 5.19 1.71 5.19 4.86c0 2.35-1.18 6.38-4.98 6.38c-1 0-1.86-.54-2.16-1.17c0 0-.51 2.03-.62 2.42c-.22.83-.81 1.87-1.2 2.5c.91.28 1.88.43 2.88.43c5.46 0 9.04-3.66 9.04-8.02C21.01 5.64 17.5 2 12.04 2"
+                    d="M16.5 2c.4 2.7 1.9 4.3 4.5 4.6v3.1c-1.6.1-3.1-.4-4.5-1.3v7.1c0 4-3.3 6.9-7.4 6.2c-2.8-.5-5-2.9-5.1-5.7c-.2-3.6 2.8-6.6 6.4-6.4v3.4c-.2 0-.4 0-.6.1c-1.4.3-2.4 1.6-2.3 3.1c.1 1.7 1.7 2.9 3.4 2.5c1.3-.3 2.2-1.4 2.2-2.8V2h3.4Z"
                   />
-                </svg>
-              </Social>
-
-              <Social href="https://www.houzz.com" label="Houzz">
-                <svg viewBox="0 0 24 24" className="h-6 w-6">
-                  <path fill="currentColor" d="M4 3v9l8-4.5V21l8-4.5V3z" />
                 </svg>
               </Social>
 
@@ -119,6 +130,10 @@ export default function Footer() {
                   />
                 </svg>
               </Social>
+            </div>
+
+            <div className="mt-4 text-xs text-white/55">
+              Follow for projects, lines, installs, and behind-the-scenes work.
             </div>
           </div>
         </div>
